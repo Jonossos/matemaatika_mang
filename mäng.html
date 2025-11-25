@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matemaatika Mäng</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e22ce 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.4);
+            max-width: 600px;
+            width: 100%;
+            border: 3px solid rgba(255,255,255,0.2);
+        }
+
+        h1 {
+            color: #1e3c72;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 2.2em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #e0e7ff 0%, #ddd6fe 100%);
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #1e3c72;
+        }
+
+        .question-box {
+            background: linear-gradient(135deg, #1e3c72 0%, #7e22ce 100%);
+            color: white;
+            padding: 50px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 3em;
+            font-weight: bold;
+            min-height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(30, 60, 114, 0.3);
+        }
+
+        .answer-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        #answer {
+            flex: 1;
+            padding: 15px;
+            font-size: 1.2em;
+            border: 3px solid #1e3c72;
+            border-radius: 10px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        #answer:focus {
+            border-color: #7e22ce;
+            box-shadow: 0 0 15px rgba(126, 34, 206, 0.3);
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #1e3c72 0%, #7e22ce 100%);
+            color: white;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(126, 34, 206, 0.4);
+        }
+
+        .feedback {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 1.1em;
+            display: none;
+        }
+
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+
+        .feedback.wrong {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+
+        .shop {
+            border-top: 2px solid #eee;
+            padding-top: 20px;
+        }
+
+        .shop h2 {
+            color: #1e3c72;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .shop-items {
+            display: grid;
+            gap: 10px;
+        }
+
+        .shop-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .shop-item.owned {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+
+        .shop-item.active {
+            background: #cfe2ff;
+            border-color: #0d6efd;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 3px;
+        }
+
+        .item-desc {
+            font-size: 0.85em;
+            color: #666;
+        }
+
+        .buy-btn {
+            background: #1e3c72;
+            color: white;
+            padding: 8px 20px;
+            font-size: 0.9em;
+        }
+
+        .buy-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .activate-btn {
+            background: #28a745;
+            color: white;
+            padding: 8px 20px;
+            font-size: 0.9em;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .shake {
+            animation: shake 0.5s;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .pulse {
+            animation: pulse 0.5s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧮 Matemaatika Mäng</h1>
+        
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-label">Punktid</div>
+                <div class="stat-value" id="points">0</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Õigeid</div>
+                <div class="stat-value" id="correct">0</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Järjest</div>
+                <div class="stat-value" id="streak">0</div>
+            </div>
+        </div>
+
+        <div class="question-box" id="question">5 + 3 = ?</div>
+
+        <div class="feedback" id="feedback"></div>
+
+        <div class="answer-section">
+            <input type="number" id="answer" placeholder="Sisesta vastus...">
+            <button class="submit-btn" onclick="checkAnswer()">Kontrolli</button>
+        </div>
+
+        <div class="shop">
+            <h2>🛒 Pood - Osta Uusi Tehteid</h2>
+            <div class="shop-items" id="shopItems"></div>
+        </div>
+    </div>
+
+    <script>
+        let points = 0;
+        let correctCount = 0;
+        let streak = 0;
+        let currentQuestion = {};
+        
+        const operations = {
+            addition: { symbol: '+', name: 'Liitmine', price: 0, owned: true, active: true, difficulty: 1, points: 1 },
+            subtraction: { symbol: '-', name: 'Lahutamine', price: 50, owned: false, active: false, difficulty: 1, points: 2 },
+            multiplication: { symbol: '×', name: 'Korrutamine', price: 150, owned: false, active: false, difficulty: 2, points: 3 },
+            division: { symbol: '÷', name: 'Jagamine', price: 200, owned: false, active: false, difficulty: 2, points: 4 }
+        };
+
+        function generateQuestion() {
+            const activeOps = Object.entries(operations).filter(([_, op]) => op.active);
+            const [opKey, op] = activeOps[Math.floor(Math.random() * activeOps.length)];
+            
+            let num1, num2, answer;
+            
+            switch(opKey) {
+                case 'addition':
+                    num1 = Math.floor(Math.random() * 20) + 1;
+                    num2 = Math.floor(Math.random() * 20) + 1;
+                    answer = num1 + num2;
+                    break;
+                case 'subtraction':
+                    num1 = Math.floor(Math.random() * 30) + 10;
+                    num2 = Math.floor(Math.random() * num1);
+                    answer = num1 - num2;
+                    break;
+                case 'multiplication':
+                    num1 = Math.floor(Math.random() * 12) + 1;
+                    num2 = Math.floor(Math.random() * 12) + 1;
+                    answer = num1 * num2;
+                    break;
+                case 'division':
+                    num2 = Math.floor(Math.random() * 10) + 2;
+                    answer = Math.floor(Math.random() * 10) + 1;
+                    num1 = num2 * answer;
+                    break;
+            }
+            
+            currentQuestion = { num1, num2, answer, operation: opKey, points: op.points };
+            document.getElementById('question').textContent = `${num1} ${op.symbol} ${num2} = ?`;
+        }
+
+        function checkAnswer() {
+            const userAnswer = parseInt(document.getElementById('answer').value);
+            const feedback = document.getElementById('feedback');
+            const questionBox = document.getElementById('question');
+            
+            if (isNaN(userAnswer)) {
+                feedback.className = 'feedback wrong';
+                feedback.textContent = 'Palun sisesta number!';
+                return;
+            }
+            
+            if (userAnswer === currentQuestion.answer) {
+                feedback.className = 'feedback correct';
+                const earnedPoints = currentQuestion.points + Math.floor(streak / 3);
+                feedback.textContent = `✅ Õige! +${earnedPoints} punkti`;
+                
+                points += earnedPoints;
+                correctCount++;
+                streak++;
+                
+                questionBox.classList.add('pulse');
+                setTimeout(() => questionBox.classList.remove('pulse'), 500);
+            } else {
+                feedback.className = 'feedback wrong';
+                feedback.textContent = `❌ Vale! Õige vastus: ${currentQuestion.answer}`;
+                streak = 0;
+                
+                questionBox.classList.add('shake');
+                setTimeout(() => questionBox.classList.remove('shake'), 500);
+            }
+            
+            updateStats();
+            updateShop();
+            
+            document.getElementById('answer').value = '';
+            
+            setTimeout(() => {
+                feedback.style.display = 'none';
+                generateQuestion();
+            }, 1500);
+        }
+
+        function updateStats() {
+            document.getElementById('points').textContent = points;
+            document.getElementById('correct').textContent = correctCount;
+            document.getElementById('streak').textContent = streak;
+        }
+
+        function buyOperation(opKey) {
+            const op = operations[opKey];
+            if (points >= op.price && !op.owned) {
+                points -= op.price;
+                op.owned = true;
+                op.active = true;
+                updateStats();
+                updateShop();
+            }
+        }
+
+        function toggleOperation(opKey) {
+            operations[opKey].active = !operations[opKey].active;
+            
+            // Veendu, et vähemalt üks tehte tüüp on aktiivne
+            const hasActive = Object.values(operations).some(op => op.active);
+            if (!hasActive) {
+                operations[opKey].active = true;
+            }
+            
+            updateShop();
+            generateQuestion();
+        }
+
+        function updateShop() {
+            const shopItems = document.getElementById('shopItems');
+            shopItems.innerHTML = '';
+            
+            Object.entries(operations).forEach(([key, op]) => {
+                const item = document.createElement('div');
+                item.className = 'shop-item';
+                if (op.owned) item.classList.add('owned');
+                if (op.active) item.classList.add('active');
+                
+                const info = document.createElement('div');
+                info.className = 'item-info';
+                
+                const name = document.createElement('div');
+                name.className = 'item-name';
+                name.textContent = `${op.symbol} ${op.name}`;
+                
+                const desc = document.createElement('div');
+                desc.className = 'item-desc';
+                desc.textContent = op.owned ? `+${op.points} punkti õige vastuse eest` : `Hind: ${op.price} punkti`;
+                
+                info.appendChild(name);
+                info.appendChild(desc);
+                item.appendChild(info);
+                
+                if (!op.owned) {
+                    const buyBtn = document.createElement('button');
+                    buyBtn.className = 'buy-btn';
+                    buyBtn.textContent = `Osta (${op.price})`;
+                    buyBtn.disabled = points < op.price;
+                    buyBtn.onclick = () => buyOperation(key);
+                    item.appendChild(buyBtn);
+                } else {
+                    const activateBtn = document.createElement('button');
+                    activateBtn.className = 'activate-btn';
+                    activateBtn.textContent = op.active ? '✓ Aktiivne' : 'Aktiveeri';
+                    activateBtn.onclick = () => toggleOperation(key);
+                    item.appendChild(activateBtn);
+                }
+                
+                shopItems.appendChild(item);
+            });
+        }
+
+        // Enter klahv vastuse sisestamiseks
+        document.getElementById('answer').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+
+        // Alusta mängu
+        generateQuestion();
+        updateShop();
+    </script>
+</body>
+</html>
